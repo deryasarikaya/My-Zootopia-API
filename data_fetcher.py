@@ -1,6 +1,10 @@
 import requests
+import os
+from dotenv import load_dotenv
 
-API_KEY = "n92xLG6VhQ3MP1YHyQIFcV57RTac5uQbwxgHBYYd"
+load_dotenv()
+
+API_KEY = os.getenv('API_KEY')
 API_URL = "https://api.api-ninjas.com/v1/animals"
 
 def fetch_data(animal_name):
