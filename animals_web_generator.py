@@ -1,10 +1,17 @@
-import json
+import requests
 
+API_KEY = "n92xLG6VhQ3MP1YHyQIFcV57RTac5uQbwxgHBYYd"
+API_URL = "https://api.api-ninjas.com/v1/animals"
 
-def load_data(file_path):
-    """Load animal data from a JSON file."""
-    with open(file_path, "r") as handle:
-        return json.load(handle)
+def fetch_data(animal_name):
+    """Fetch animal data from API."""
+    response = requests.get(
+        API_URL,
+        headers={"X-Api-Key": API_KEY},
+        params={"name": animal_name}
+    )
+
+    return response.json()
 
 
 def serialize_animal(animal):
@@ -36,22 +43,28 @@ def serialize_animal(animal):
 
 
 def main():
-    """Generate animals.html from the animal data and HTML template."""
-    animals_data = load_data("animals_data.json")
+    """Generate animals.html using data from the API."""
+
+    animal_name = input("Enter a name of an animal: ")
+    animals_data = fetch_data(animal_name)
 
     with open("animals_template.html", "r") as file:
         html_template = file.read()
 
-    output = ""
+    if len(animals_data) == 0:
+        output = f'<h2 style="color:deeppink; font-size:60px; text-align:center;">The animal "{animal_name}" doesn\'t exist.</h2>'
+    else:
+        output = ""
 
-    for animal in animals_data:
-        output += serialize_animal(animal)
+        for animal in animals_data:
+            output += serialize_animal(animal)
 
     new_html = html_template.replace("__REPLACE_ANIMALS_INFO__", output)
 
     with open("animals.html", "w") as file:
         file.write(new_html)
 
+    print("Website was successfully generated to the file animals.html.")
 
 if __name__ == "__main__":
     main()
